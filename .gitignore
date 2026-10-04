@@ -1,0 +1,27 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# SQLite database
+database.db
+database.db.backup
+
+# Environment variables / secrets
+.env
+
+# AWS credentials
+*.pem
+.aws/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.dbapp_backup_before_users.py
+
+app_backup_before_users.py

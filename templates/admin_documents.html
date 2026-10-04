@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cloud Documents - Student Cloud Portal</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #1677f9;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-buttons a {
+            text-decoration: none;
+            color: white;
+            border: 1px solid white;
+            padding: 9px 16px;
+            border-radius: 6px;
+        }
+
+        .nav-buttons a.dashboard {
+            background: white;
+            color: #1677f9;
+        }
+
+        .container {
+            width: 76%;
+            margin: 55px auto;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 19px;
+            color: #64748b;
+            margin-bottom: 35px;
+        }
+
+        .documents-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #d7e5fa;
+            padding: 17px;
+            text-align: left;
+            font-size: 17px;
+        }
+
+        td {
+            padding: 18px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .file-name {
+            font-weight: 600;
+        }
+
+        .action-btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin-right: 6px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .open-btn {
+            background: #1677f9;
+            color: white;
+        }
+
+        .open-btn:hover {
+            background: #0d63d8;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px;
+            color: #64748b;
+        }
+
+        .security-box {
+            margin-top: 30px;
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .security-box h2 {
+            margin-top: 0;
+        }
+
+        .security-box p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <div class="logo">
+            ☁ Student Cloud Portal
+        </div>
+
+        <div class="nav-buttons">
+            <a href="{{ url_for('admin_dashboard') }}" class="dashboard">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Logout
+            </a>
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <h1>📁 Cloud Documents</h1>
+
+        <div class="subtitle">
+            View documents uploaded by students and stored securely in Amazon S3.
+        </div>
+
+
+        <div class="documents-card">
+
+            {% if files %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Document</th>
+                        <th>Last Modified</th>
+                        <th>Size</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for file in files %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+                        <td class="file-name">
+                            📄 {{ file.Key }}
+                        </td>
+
+                        <td>
+                            {{ file.LastModified.strftime('%Y-%m-%d %H:%M') }}
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(file.Size / 1024) }} KB
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('open_document', key=file.Key) }}"
+                                target="_blank"
+                                class="action-btn open-btn">
+                                👁 Open
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                📂 No documents have been uploaded yet.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="security-box">
+
+            <h2>🔐 Secure Cloud Storage</h2>
+
+            <p>
+                Documents are stored in Amazon S3. The EC2 application
+                accesses the bucket through the
+                <strong>StudentCloudEC2Role</strong> IAM role.
+            </p>
+
+            <p>
+                Documents remain private. When an administrator opens a file,
+                the application generates a temporary secure S3 URL.
+            </p>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
